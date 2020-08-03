@@ -1,0 +1,153 @@
+---
+title: 'Kernel module installation using DKMS'
+output:
+  html_document
+---
+
+# Steps to install facetime hd camera drivers
+
+1. Firmware extraction
+
+```{bash, engine.opts='-l', eval = FALSE}
+
+sudo apt-get install curl xzcat cpio
+git clone https://github.com/patjak/facetimehd-firmware.git
+cd facetimehd-firmware
+make
+sudo make install
+
+```
+
+2. Extract sensor calibration files
+
+```{bash engine.opts='-l', eval = FALSE}
+
+wget "https://download.info.apple.com/Mac_OS_X/031-30890-20150812-ea191174-4130-11e5-a125-930911ba098f/bootcamp5.1.5769.zip"
+unzip bootcamp5.1.5769.zip
+cd BootCamp/Drivers/Apple
+unrar x AppleCamera64.exe
+dd bs=1 skip=1663920 count=33060 if=AppleCamera.sys of=9112_01XX.dat
+dd bs=1 skip=1644880 count=19040 if=AppleCamera.sys of=1771_01XX.dat
+dd bs=1 skip=1606800 count=19040 if=AppleCamera.sys of=1871_01XX.dat
+dd bs=1 skip=1625840 count=19040 if=AppleCamera.sys of=1874_01XX.dat
+sudo cp *.dat /lib/firmware/facetimehd/
+
+```
+
+3. Run installation script for kernel module
+
+```{bash engine.opts='-l', eval = FALSE}
+
+git clone https://github.com/patjak/bcwc_pcie.git
+cd bcwc_pcie
+make
+sudo make install
+sudo depmod
+sudo modprobe -r bdc_pci
+sudo modprobe facetimehd
+
+```
+
+The three steps above will install the driver on an Ubuntu system. However to
+auto-compile on each kernel update do the following.
+
+# Building Linux kernel modules
+
+In this article we describe how to build a dynamic kernel module using dynamic
+kernel module support (DKMS) system for Linux. The example used here will be for
+Ubuntu Linux installed on Macbook pro. This guide uses the installation of the
+facetimehd driver as an example.
+
+- First install the requisite system packages
+
+```{bash, engine.opts='-l', eval = FALSE}
+apt install debhelper dkms
+```
+
+- Remove old package if installed
+
+```{bash, engine.opts='-l', eval = FALSE}
+dpkg -r bcwc-pcie
+```
+
+- Make a source directory for the module
+
+```{bash, engine.opts='-l', eval = FALSE}
+mkdir /usr/src/facetimehd-0.1
+```
+
+- Change into the git repo dir
+
+```{bash engine.opts='-l', eval = FALSE}
+cd bcwc_pcie
+```
+
+- Copy files over
+
+```{bash engine.opts='-l', eval = FALSE}
+cp -r * /usr/src/facetimehd-0.1/
+``` 
+
+- Change into that dir
+
+```{bash engine.opts='-l', eval = FALSE}
+cd /usr/src/facetimehd-0.1/
+```
+
+- Remove any previous debs and backups
+
+```{bash engine.opts='-l', eval = FALSE}
+rm backup-*tgz bcwc-pcie_*deb
+```
+
+- Clear out previous compile
+
+```{bash engine.opts='-l', eval = FALSE}
+make clean
+```
+
+- Register the new module with DKMS
+
+```{bash engine.opts='-l', eval = FALSE}
+dkms add -m facetimehd -v 0.1
+```
+
+- Build the module
+
+```{bash engine.opts='-l', eval = FALSE}
+dkms build -m facetimehd -v 0.1
+```
+
+- Build a Debian source package
+
+```{bash engine.opts='-l', eval = FALSE}
+dkms mkdsc -m facetimehd -v 0.1 --source-only
+```
+
+- Build a Debian binary package
+
+```{bash engine.opts='-l', eval = FALSE}
+dkms mkdeb -m facetimehd -v 0.1 --source-only
+```
+
+- Copy deb locally
+
+```{bash engine.opts='-l', eval = FALSE}
+cp /var/lib/dkms/facetimehd/0.1/deb/facetimehd-dkms_0.1_all.deb ~/
+```
+
+- Get rid of the local build files
+
+```{bash engine.opts='-l', eval = FALSE}
+rm -r /var/lib/dkms/facetimehd/
+```
+
+- Install the new deb package
+
+```{bash engine.opts='-l', eval = FALSE}
+sudo dpkg -i /root/facetimehd-dkms_0.1_all.deb
+```
+
+
+
+
