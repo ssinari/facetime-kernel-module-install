@@ -54,73 +54,74 @@ the installation of the facetimehd driver as an example.
 -   First install the requisite system packages
 
 ``` bash
-apt install debhelper dkms
+sudo apt install debhelper dkms
 ```
 
 -   Remove old package if installed
 
 ``` bash
-dpkg -r bcwc-pcie
+sudo dpkg -r bcwc-pcie
 ```
 
 -   Make a source directory for the module
 
 ``` bash
-mkdir /usr/src/facetimehd-0.1
+sudo mkdir /usr/src/facetimehd-0.1
 ```
 
 -   Change into the git repo dir
 
 ``` bash
+git clone https://github.com/patjak/bcwc_pcie.git
 cd bcwc_pcie
 ```
 
 -   Copy files over
 
 ``` bash
-cp -r * /usr/src/facetimehd-0.1/
+sudo cp -r * /usr/src/facetimehd-0.1/
 ```
 
 -   Change into that dir
 
 ``` bash
-cd /usr/src/facetimehd-0.1/
+sudo cd /usr/src/facetimehd-0.1/
 ```
 
 -   Remove any previous debs and backups
 
 ``` bash
-rm backup-*tgz bcwc-pcie_*deb
+sudo rm backup-*tgz bcwc-pcie_*deb
 ```
 
 -   Clear out previous compile
 
 ``` bash
-make clean
+sudo make clean
 ```
 
 -   Register the new module with DKMS
 
 ``` bash
-dkms add -m facetimehd -v 0.1
+sudo dkms add -m facetimehd -v 0.1
 ```
 
 -   Build the module
 
 ``` bash
-dkms build -m facetimehd -v 0.1
+sudo dkms build -m facetimehd -v 0.1
 ```
 
 -   Build a Debian source package
 
 ``` bash
-dkms mkdsc -m facetimehd -v 0.1 --source-only
+sudo dkms mkdsc -m facetimehd -v 0.1 --source-only
 ```
 
 -   Build a Debian binary package
 
 ``` bash
-dkms mkdeb -m facetimehd -v 0.1 --source-only
+sudo dkms mkdeb -m facetimehd -v 0.1 --source-only
 ```
 
 -   Copy deb locally
@@ -132,11 +133,11 @@ cp /var/lib/dkms/facetimehd/0.1/deb/facetimehd-dkms_0.1_all.deb ~/
 -   Get rid of the local build files
 
 ``` bash
-rm -r /var/lib/dkms/facetimehd/
+sudo rm -r /var/lib/dkms/facetimehd/
 ```
 
 -   Install the new deb package
 
 ``` bash
-sudo dpkg -i /root/facetimehd-dkms_0.1_all.deb
+sudo dpkg -i ~/facetimehd-dkms_0.1_all.deb
 ```
