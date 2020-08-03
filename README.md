@@ -49,7 +49,9 @@ Building Linux kernel modules
 In this article we describe how to build a dynamic kernel module using
 dynamic kernel module support (DKMS) system for Linux. The example used
 here will be for Ubuntu Linux installed on Macbook pro. This guide uses
-the installation of the facetimehd driver as an example.
+the installation of the facetimehd driver as an example. These instructions are
+copied from the following site:
+https://github.com/patjak/bcwc_pcie/wiki/Get-Started
 
 -   First install the requisite system packages
 
