@@ -12,7 +12,7 @@ make
 sudo make install
 ```
 
-1.  Extract sensor calibration files
+2.  Extract sensor calibration files
 
 ``` bash
 
@@ -27,7 +27,7 @@ dd bs=1 skip=1625840 count=19040 if=AppleCamera.sys of=1874_01XX.dat
 sudo cp *.dat /lib/firmware/facetimehd/
 ```
 
-1.  Run installation script for kernel module
+3.  Run installation script for kernel module
 
 ``` bash
 
