@@ -143,3 +143,9 @@ sudo rm -r /var/lib/dkms/facetimehd/
 ``` bash
 sudo dpkg -i ~/facetimehd-dkms_0.1_all.deb
 ```
+
+- You also need to add the module to /etc/modules
+
+```bash
+sudo echo 'facetimehd' >> /etc/modules
+```
